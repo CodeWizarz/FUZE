@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database
+  # Used for both Temporal internal persistence and Application data.
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15
+    container_name: fuze-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=temporal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - temporal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Temporal Server (Auto-Setup)
+  # Bundles Frontend, History, Matching, Worker services, and UI.
+  # Configured to use the external PostgreSQL container for persistence.
+  # ---------------------------------------------------------------------------
+  temporal:
+    image: temporalio/auto-setup:latest
+    container_name: fuze-temporal
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+    ports:
+      - "7233:7233" # gRPC port for SDKs
+      - "8233:8233" # HTTP port (for metrics/UI potentially depending on version)
+      - "8080:8080" # Temporal UI
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - temporal-network
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+
+  # ---------------------------------------------------------------------------
+  # Temporal Archival (Optional, strictly not needed for dev but good for prod structure)
+  # ---------------------------------------------------------------------------
+
+volumes:
+  postgres_data:
+  temporal_dynamic_config:
+
+networks:
+  temporal-network:
+    driver: bridge

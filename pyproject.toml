@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fuze"
+version = "0.1.0"
+description = "Production-grade Python system using Temporal and FastAPI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name", email = "you@example.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "temporalio>=1.4.0",
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.20.0",
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.28.0",
+    "alembic>=1.11.0",
+    "structlog>=23.1.0",
+    "pydantic-settings>=2.0.0",
+    "typer>=0.9.0",  # For CLI commands if needed
+    "python-json-logger>=2.0.7", # Good for structlog JSON output
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.0.280",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+select = ["E", "F", "I", "N", "W", "B"]
+ignore = []
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

@@ -1,0 +1,6 @@
+# Dynamic Config for Development
+# Allows relaxing certain constraints for local dev/testing.
+
+frontend.enableNamespaceNotExists:
+  - value: true
+    constraints: {}
