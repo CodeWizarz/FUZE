@@ -21,7 +21,7 @@ This system uses a **Durable Execution** pattern where state is managed by Tempo
 
 ### Why Temporal?
 
-For complex flows like Order Fulfillment, traditional queue-based systems (Celery/SQS) suffer from "Status Column Hell"—you end up managing hundreds of state flags and race conditions manually.
+For complex flows like Order Fulfillment, traditional queue-based systems (Celery/SQS) suffer from "Status Column Hell" you end up managing hundreds of state flags and race conditions manually.
 
 Temporal solves this by:
 - **Durability**: If the worker crashes mid-workflow, it resumes exactly where it left off.
